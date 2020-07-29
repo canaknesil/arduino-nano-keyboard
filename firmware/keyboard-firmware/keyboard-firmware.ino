@@ -1,10 +1,39 @@
+#include "platform_dependent.h"
+#include "keyboard.h"
+
+#define DEBUG_MSG_SIZE_MAX 256
+
+/*
+ * Platform dependent functions
+ */
+
+void dprint(char *str, ...)
+{
+	static char msg[DEBUG_MSG_SIZE_MAX];
+	va_list args;
+	
+	str[DEBUG_MSG_SIZE_MAX - 1] = '\0'; // Chop str.
+	
+	va_start(args, str);
+	vsprintf(msg, str, args);
+	va_end(args);
+	
+	Serial.write('p');
+	Serial.print(msg);
+	Serial.write('\0');
+}
+
+
+/* 
+ * Arduino main
+ */
+
 void setup() {
-    pinMode(LED_BUILTIN, OUTPUT);
+	Serial.begin(9600);
+	dprint("Initialized.");
 }
 
 void loop() {
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(300);
-    digitalWrite(LED_BUILTIN, LOW);
-    delay(300);
+	do_smt();
+	delay(5000);
 }
