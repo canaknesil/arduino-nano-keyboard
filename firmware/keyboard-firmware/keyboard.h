@@ -5,8 +5,11 @@
 extern "C"
 {
 #endif
+
+  #define ROWS 6
+  #define COLS 15
   
-  void do_smt();
+  void keyboard_loop();
 
 #if defined(__cplusplus)
 }

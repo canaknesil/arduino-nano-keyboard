@@ -4,10 +4,13 @@
 #define DEBUG_MSG_SIZE_MAX 256
 
 /*
- * Platform dependent functions
+ * Platform dependent
  */
 
-void dprint(char *str, ...)
+int row_pins[ROWS] = {A0, A1, A2, A3, A4, A5};
+int col_pins[COLS] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, A7};
+
+void d_print(char *str, ...)
 {
 	static char msg[DEBUG_MSG_SIZE_MAX];
 	va_list args;
@@ -23,17 +26,68 @@ void dprint(char *str, ...)
 	Serial.write('\0');
 }
 
+void d_delay(unsigned long ms)
+{
+	delay(ms);
+}
+
+char d_read_pin(int pin)
+{
+	if (pin >= A0 && pin <= A5) {
+		// Pull down resister of analog pins are too high giving HIGH at slightest disturbence. 
+		int val = analogRead(pin);
+		if (val > 900)
+			return 1;
+		else
+			return 0;
+	} else {
+		int val = digitalRead(pin);
+		if (val == HIGH)
+			return 1;
+		else
+			return 0;
+	}
+}
+
+void d_write_pin(int pin, char val)
+{
+	if (val)
+		digitalWrite(pin, HIGH);
+	else
+		digitalWrite(pin, LOW);
+}
 
 /* 
  * Arduino main
  */
 
+void print_pin_info()
+{
+	d_print("Pin info:");
+	for (int i=0; i<ROWS; i++)
+		d_print("Row %d -> %d", i, row_pins[i]);
+	for (int i=0; i<COLS; i++)
+		d_print("Col %d -> %d", i, col_pins[i]);
+}
+
+void prepare_pins()
+{
+	for (int i=0; i<ROWS; i++)
+		pinMode(row_pins[i], INPUT);
+	for (int i=0; i<COLS; i++) {
+		pinMode(col_pins[i], OUTPUT);
+		digitalWrite(col_pins[i], LOW);
+	}
+}
+
 void setup() {
 	Serial.begin(9600);
-	dprint("Initialized.");
+	prepare_pins();
+
+	d_print("Initialized.");
+	print_pin_info();
 }
 
 void loop() {
-	do_smt();
-	delay(5000);
+	keyboard_loop();
 }
