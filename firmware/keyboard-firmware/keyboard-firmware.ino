@@ -57,6 +57,13 @@ void d_write_pin(int pin, char val)
 		digitalWrite(pin, LOW);
 }
 
+void d_send_keycode(KeyCode key, char pressed)
+{
+	Serial.write('k');
+	Serial.write(pressed);
+	Serial.write(&key, sizeof(KeyCode));
+}
+
 /* 
  * Arduino main
  */

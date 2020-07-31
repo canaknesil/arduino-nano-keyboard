@@ -15,6 +15,7 @@ extern "C"
   void d_delay(unsigned long ms);
   char d_read_pin(int pin);
   void d_write_pin(int pin, char val);
+  void d_send_keycode(KeyCode kc, char pressed); // 1: pressed, 0: released
 
 #if defined(__cplusplus)
 }
