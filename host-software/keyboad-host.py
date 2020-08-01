@@ -1,20 +1,46 @@
 import serial
+from serial.tools.list_ports import comports
 import sys
 import time
 import pynput.keyboard as kb
+import os
+
+#
+# KEYBOARD KEY INVOCATION
+#
 
 def get_key_name(keycode):
     return "keyname" # TODO
 
-def blocking_connect_to_port(port):
-    while True:
-        try:
-            ser = serial.Serial(port)
-            return ser
-        except serial.SerialException:
-            print("Unsuccessfull connection to port " + port)
-            time.sleep(1)
+#
+# DEVICE CONNECTION
+#
 
+def get_port(product_id, vendor_id):
+    devices = list(filter(lambda d: d.pid == product_id and d.vid == vendor_id,
+                          comports()))
+    if len(devices) != 1:
+        return None
+    return devices[0].device
+
+def blocking_connect_to_port(product_id, vendor_id):
+    print("Waiting for device with product ID %d and vendor ID %d to connect..." % (product_id, vendor_id))
+    while True:
+        port = get_port(product_id, vendor_id)
+        if port != None:
+            try:
+                ser = serial.Serial(port)
+                print("Connected to port " + port)
+                return ser
+            except serial.SerialException:
+                pass
+            print("Unsuccessfull connection to port " + port)
+        time.sleep(1)
+
+#
+# COMMAND_LOOP
+#
+        
 def read_char(ser):
     return str(ser.read().decode("utf-8"))
 
@@ -43,14 +69,24 @@ def command_loop(ser):
         else:
             print("Unknown command", command)
 
+#
+# MAIN
+#
 
 def main():
-    port = sys.argv[1]
-    print("port: " + port)
+    config_file = os.path.dirname(os.path.realpath(__file__)) + "/identified-device"
+    if not os.path.exists(config_file):
+        print("Device is not identified.")
+        print("Run identify-device.py to identify the device.")
+        sys.exit()
+
+    with open(config_file) as f:
+        lines = f.readlines()
+    product_id = int(lines[0])
+    vendor_id = int(lines[1])
 
     while True:
-        ser = blocking_connect_to_port(port)
-        print("Connected to port " + ser.name)
+        ser = blocking_connect_to_port(product_id, vendor_id)
         
         try:
             command_loop(ser)
