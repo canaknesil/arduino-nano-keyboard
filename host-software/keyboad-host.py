@@ -4,6 +4,7 @@ import sys
 import time
 import pynput.keyboard as kb
 import os
+from keycode import hid_to_key
 
 #
 # KEYBOARD KEY INVOCATION
@@ -61,11 +62,11 @@ def command_loop(ser):
         elif command == 'k':
             pressed = True if read_int(ser) != 0 else False
             keycode = read_int(ser)
-            keyname = get_key_name(keycode)
+            key = hid_to_key(keycode)
             if pressed:
-                print("Pressed %s (%d)" % (keyname, keycode))
+                print("Pressed  %s (keycode = %d)" % (str(key), keycode))
             else:
-                print("Released %s (%d)" % (keyname, keycode))
+                print("Released %s (keycode = %d)" % (str(key), keycode))
         else:
             print("Unknown command", command)
 
