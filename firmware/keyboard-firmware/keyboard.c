@@ -161,5 +161,5 @@ void keyboard_loop()
 {
   scan_matrix();
   report_change();
-  d_delay(100);
+  d_delay(10);
 }
