@@ -1,5 +1,7 @@
 # Arduino Nano Keyboard
 
+THIS PROJECT HAS NOT BEEN COMPLETED !!!
+
 Keyboard firmware to be run on Arduino Nano, along with software
 running on computer end.
 
