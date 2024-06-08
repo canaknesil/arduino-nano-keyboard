@@ -8,7 +8,7 @@
  */
 
 int row_pins[ROWS] = {A0, A1, A2, A3, A4, A5};
-int col_pins[COLS] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, A7};
+int col_pins[COLS] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 
 void d_print(char *str, ...)
 {
@@ -35,9 +35,8 @@ void d_delay(unsigned long ms)
 char d_read_pin(int pin)
 {
 	if (pin >= A0 && pin <= A5) {
-		// Pull down resister of analog pins are too high giving HIGH at slightest disturbence. 
 		int val = analogRead(pin);
-		if (val > 900)
+		if (val > 950)
 			return 1;
 		else
 			return 0;
@@ -93,7 +92,10 @@ void setup() {
 	prepare_pins();
 
 	d_print("Initialized.");
-	print_pin_info();
+	//print_pin_info();
+
+	// Debug
+	//d_write_pin(col_pins[1], HIGH);
 }
 
 void loop() {

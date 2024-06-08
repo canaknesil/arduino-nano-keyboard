@@ -7,10 +7,10 @@ extern "C"
 #endif
 
   #define ROWS 6
-  #define COLS 15
+  #define COLS 12
 
   // Keycodes in keycode.h are 1 byte. 
-  typedef char KeyCode;
+  typedef unsigned char KeyCode;
   
   void keyboard_loop();
 

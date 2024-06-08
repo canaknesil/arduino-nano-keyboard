@@ -30,7 +30,7 @@ def blocking_connect_to_port(product_id, vendor_id):
         port = get_port(product_id, vendor_id)
         if port != None:
             try:
-                ser = serial.Serial(port)
+                ser = serial.Serial(port, timeout=1)
                 print("Connected to port " + port)
                 return ser
             except serial.SerialException:
@@ -52,7 +52,9 @@ def command_loop(ser):
     print("Listening device ...")
     while True:
         command = read_char(ser)
-        if command == 'p': # Print for debugging
+        if len(command) == 0:
+            continue
+        elif command == 'p': # Print for debugging
             print("Device print: ", end="")
             c = read_char(ser)
             while c != '\0':
